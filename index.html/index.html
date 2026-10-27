@@ -1,0 +1,605 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#17352f">
+  <meta name="description" content="Интерактивная диагностика рисков покупки недвижимости с Ириной Яковенко — экспертом по загородной недвижимости Екатеринбурга и руководителем агентства недвижимости.">
+  <title>Диагностика рисков покупки недвижимости — Ирина Яковенко</title>
+  <style>
+    :root {
+      --bg: #f4f2ed;
+      --surface: #ffffff;
+      --surface-2: #eef2ef;
+      --text: #16201d;
+      --muted: #66706c;
+      --line: #d9dfdc;
+      --accent: #17352f;
+      --accent-2: #285c50;
+      --accent-soft: #e7efeb;
+      --warn: #7a4d24;
+      --warn-bg: #fbf4e9;
+      --radius: 22px;
+      --shadow: 0 18px 60px rgba(23,53,47,.10);
+      --max: 920px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 10% 0%, rgba(40,92,80,.09), transparent 28rem),
+        var(--bg);
+      line-height: 1.5;
+    }
+    button, a { font: inherit; }
+    button { border: 0; }
+    a { color: inherit; }
+    .wrap { width: min(var(--max), calc(100% - 28px)); margin: 0 auto; padding: 28px 0 48px; }
+    .topbar { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:22px; }
+    .brand { font-weight: 750; letter-spacing: -.02em; }
+    .brand small { display:block; color:var(--muted); font-size:.78rem; font-weight:600; letter-spacing:0; margin-top:2px; }
+    .privacy { color:var(--muted); font-size:.85rem; text-align:right; }
+    .card { background:var(--surface); border:1px solid rgba(23,53,47,.08); border-radius:var(--radius); box-shadow:var(--shadow); padding:clamp(22px,5vw,48px); }
+    .hero { min-height: 570px; display:grid; align-content:center; }
+    .eyebrow { color:var(--accent-2); font-size:.85rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; margin:0 0 14px; }
+    h1,h2,h3 { margin:0; line-height:1.08; letter-spacing:-.035em; }
+    h1 { font-size:clamp(2.15rem,7vw,4.65rem); max-width:760px; }
+    h2 { font-size:clamp(1.7rem,5vw,3rem); }
+    h3 { font-size:1.08rem; letter-spacing:-.015em; }
+    .lead { color:var(--muted); font-size:clamp(1rem,2.6vw,1.18rem); max-width:690px; margin:22px 0 0; }
+    .trust-row { display:flex; flex-wrap:wrap; gap:10px; margin:26px 0 30px; }
+    .pill { background:var(--surface-2); border:1px solid var(--line); color:var(--text); border-radius:999px; padding:9px 13px; font-size:.88rem; font-weight:650; }
+    .btn { display:inline-flex; align-items:center; justify-content:center; min-height:54px; padding:14px 20px; border-radius:16px; text-decoration:none; font-weight:800; cursor:pointer; transition:transform .15s ease, background .15s ease, border-color .15s ease; }
+    .btn:focus-visible, .choice:focus-visible { outline:3px solid rgba(40,92,80,.30); outline-offset:3px; }
+    .btn:hover, .choice:hover { transform:translateY(-1px); }
+    .btn-primary { background:var(--accent); color:white; }
+    .btn-primary:hover { background:#0f2a25; }
+    .btn-secondary { background:var(--surface); border:1px solid var(--line); color:var(--text); }
+    .btn-wide { width:100%; min-height:62px; font-size:1rem; }
+    .screen { display:none; }
+    .screen.active { display:block; }
+    .quiz-head { display:grid; grid-template-columns:1fr auto; gap:14px; align-items:end; margin-bottom:14px; }
+    .progress-label { color:var(--muted); font-size:.9rem; }
+    .progress { height:8px; border-radius:999px; background:#e5e8e6; overflow:hidden; margin-bottom:30px; }
+    .progress > span { display:block; height:100%; width:0; background:var(--accent); border-radius:inherit; transition:width .25s ease; }
+    .question-note { color:var(--muted); margin:10px 0 0; }
+    .choices { display:grid; gap:12px; margin-top:28px; }
+    .choice { width:100%; text-align:left; background:#fff; color:var(--text); border:1px solid var(--line); border-radius:17px; padding:17px 18px; min-height:58px; cursor:pointer; font-weight:700; }
+    .choice.selected { border-color:var(--accent); background:var(--accent-soft); box-shadow:inset 0 0 0 1px var(--accent); }
+    .actions { display:flex; gap:12px; justify-content:space-between; margin-top:28px; flex-wrap:wrap; }
+    .actions .btn { min-width:150px; }
+    .validation { min-height:24px; margin-top:12px; color:#8a342a; font-weight:700; font-size:.9rem; }
+    .result-grid { display:grid; grid-template-columns:1.15fr .85fr; gap:24px; margin-top:28px; }
+    .panel { background:var(--surface-2); border:1px solid var(--line); border-radius:18px; padding:20px; }
+    .flags { display:grid; gap:12px; margin-top:16px; }
+    .flag { background:#fff; border:1px solid var(--line); border-radius:16px; padding:16px; }
+    .flag strong { display:block; margin-bottom:5px; }
+    .flag p { margin:0; color:var(--muted); font-size:.94rem; }
+    .steps { margin:16px 0 0; padding-left:20px; }
+    .steps li { margin:0 0 10px; }
+    .disclaimer { margin-top:20px; padding:14px 16px; border-radius:14px; background:var(--warn-bg); color:var(--warn); font-size:.88rem; }
+    .cta { margin-top:26px; padding:24px; border-radius:20px; background:var(--accent); color:white; }
+    .cta p { margin:10px 0 18px; color:rgba(255,255,255,.78); }
+    .contact-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .contact { min-height:62px; border-radius:16px; text-decoration:none; display:flex; align-items:center; justify-content:center; padding:14px 18px; font-weight:850; }
+    .telegram { background:white; color:var(--accent); }
+    .max { border:1px solid rgba(255,255,255,.35); color:white; }
+    .restart { margin-top:16px; color:var(--muted); background:transparent; text-decoration:underline; cursor:pointer; padding:8px 0; }
+    .footer { color:var(--muted); font-size:.82rem; text-align:center; margin:18px auto 0; max-width:720px; }
+    @media (max-width: 720px) {
+      .wrap { width:min(100% - 18px, var(--max)); padding-top:14px; }
+      .topbar { align-items:flex-start; }
+      .privacy { max-width:150px; }
+      .card { padding:22px 18px; border-radius:18px; }
+      .hero { min-height:0; padding-top:42px; padding-bottom:42px; }
+      .result-grid, .contact-grid { grid-template-columns:1fr; }
+      .actions { display:grid; grid-template-columns:1fr 1fr; }
+      .actions .btn { min-width:0; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *,*::before,*::after { scroll-behavior:auto !important; transition:none !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap" id="app">
+    <div class="topbar">
+      <div class="brand">Ирина Яковенко <small>эксперт по загородной недвижимости · руководитель агентства</small></div>
+      <div class="privacy">Без регистрации и сбора контактов</div>
+    </div>
+
+    <section class="card hero screen active" id="startScreen" aria-labelledby="startTitle">
+      <p class="eyebrow">Интерактивная диагностика</p>
+      <h1 id="startTitle">Какие риски важно проверить именно в вашей покупке?</h1>
+      <p class="lead">Ответьте на несколько вопросов и получите персональную карту зон внимания до покупки квартиры или дома. Вы увидите, что стоит проверить до аванса, договора и расчётов. Это займёт около 3–4 минут.</p>
+      <div class="trust-row" aria-label="Преимущества диагностики">
+        <span class="pill">9+ лет в недвижимости</span>
+        <span class="pill">300+ сделок</span>
+        <span class="pill">Новостройка</span>
+        <span class="pill">Вторичный рынок</span>
+        <span class="pill">Загородная недвижимость</span>
+        <span class="pill">Ответы остаются в браузере</span>
+      </div>
+      <div>
+        <button class="btn btn-primary" id="startBtn" type="button">Пройти диагностику</button>
+      </div>
+    </section>
+
+    <section class="card screen" id="quizScreen" aria-labelledby="questionTitle">
+      <div class="quiz-head">
+        <div>
+          <div class="progress-label" id="progressLabel">Вопрос 1 из 9</div>
+        </div>
+        <div class="progress-label" id="branchLabel">Покупка недвижимости</div>
+      </div>
+      <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
+      <h2 id="questionTitle"></h2>
+      <p class="question-note" id="questionNote"></p>
+      <div class="choices" id="choices" role="radiogroup" aria-labelledby="questionTitle"></div>
+      <div class="validation" id="validation" role="alert" aria-live="polite"></div>
+      <div class="actions">
+        <button class="btn btn-secondary" id="backBtn" type="button">Назад</button>
+        <button class="btn btn-primary" id="nextBtn" type="button">Далее</button>
+      </div>
+    </section>
+
+    <section class="card screen" id="resultScreen" aria-labelledby="resultTitle">
+      <p class="eyebrow">Ваш результат</p>
+      <h2 id="resultTitle">Ваши зоны внимания</h2>
+      <p class="lead" id="resultIntro"></p>
+
+      <div class="result-grid">
+        <div>
+          <div class="panel">
+            <h3>Что проверить в первую очередь</h3>
+            <div class="flags" id="flags"></div>
+          </div>
+        </div>
+        <div>
+          <div class="panel">
+            <h3>Практические следующие шаги</h3>
+            <ol class="steps" id="nextSteps"></ol>
+          </div>
+          <div class="disclaimer">Это предварительная образовательная диагностика, а не юридическое заключение и не подтверждение безопасности конкретного объекта. Требования банков, законодательства и регистрационные правила могут меняться.</div>
+        </div>
+      </div>
+
+      <div class="cta">
+        <h3>Получить помощь в проверке недвижимости</h3>
+        <p>Напишите Ирине Яковенко. Можно прислать ссылку на объект и коротко описать вашу ситуацию. Ирина поможет увидеть важные риски и понять, что проверить до принятия решения — спокойно, профессионально и без давления.</p>
+        <div class="contact-grid">
+          <a class="contact telegram" href="https://t.me/formulavashegodoma" target="_blank" rel="noopener noreferrer">Получить помощь в Telegram</a>
+          <a class="contact max" href="https://max.ru/id667220983547_biz" target="_blank" rel="noopener noreferrer">Получить помощь в MAX</a>
+        </div>
+      </div>
+      <button class="restart" id="restartBtn" type="button">Пройти диагностику ещё раз</button>
+    </section>
+
+    <p class="footer">Ирина Яковенко · Екатеринбург и Свердловская область · «Безопасность важнее спешки» · Диагностика не сохраняет и не отправляет ответы.</p>
+  </main>
+
+  <script>
+    (() => {
+      'use strict';
+
+      const startScreen = document.getElementById('startScreen');
+      const quizScreen = document.getElementById('quizScreen');
+      const resultScreen = document.getElementById('resultScreen');
+      const startBtn = document.getElementById('startBtn');
+      const backBtn = document.getElementById('backBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const restartBtn = document.getElementById('restartBtn');
+      const questionTitle = document.getElementById('questionTitle');
+      const questionNote = document.getElementById('questionNote');
+      const choicesEl = document.getElementById('choices');
+      const progressLabel = document.getElementById('progressLabel');
+      const progressBar = document.getElementById('progressBar');
+      const branchLabel = document.getElementById('branchLabel');
+      const validation = document.getElementById('validation');
+      const flagsEl = document.getElementById('flags');
+      const nextStepsEl = document.getElementById('nextSteps');
+      const resultIntro = document.getElementById('resultIntro');
+
+      const markerInfo = {
+        strategy: { title: 'Стратегия покупки', text: 'Сначала зафиксируйте цель покупки и критерии выбора. Это помогает не переплатить за характеристики, которые вам не нужны.' },
+        finance: { title: 'Полная стоимость покупки', text: 'Проверьте не только цену объекта, но и ипотечные расходы, страховки, ремонт, отделку, переезд и резерв после сделки.' },
+        documents: { title: 'Документы и основания', text: 'До аванса важно понимать, какие документы подтверждают права и какие обстоятельства требуют дополнительной проверки.' },
+        specialist: { title: 'Независимая проверка', text: 'Если проверку ведёт только заинтересованная сторона сделки, имеет смысл добавить независимого специалиста со стороны покупателя.' },
+        developer: { title: 'Застройщик и проект', text: 'Проверьте застройщика, проектную документацию, разрешительные документы и фактическую стадию реализации проекта.' },
+        contract: { title: 'Условия договора', text: 'Особое внимание — предмету договора, срокам, ответственности сторон, доплатам, условиям передачи и расторжения.' },
+        deadline: { title: 'Сроки и передача объекта', text: 'Сопоставьте обещанные сроки с договором и своим жизненным планом. Учитывайте период на приёмку, ремонт и возможные переносы.' },
+        mortgage: { title: 'Ипотека или рассрочка', text: 'Сравните полную финансовую нагрузку, условия изменения ставки/платежей и последствия просрочки, а не только рекламную ставку.' },
+        finish: { title: 'Отделка и дополнительные расходы', text: 'Уточните состав отделки, комплектацию, стоимость доведения объекта до готовности и обязательные дополнительные платежи.' },
+        ownership: { title: 'История права собственности', text: 'Важно проследить основание возникновения права, предыдущие переходы и обстоятельства, которые могут повлиять на сделку.' },
+        residents: { title: 'Права пользования и зарегистрированные лица', text: 'Нужно проверить, кто зарегистрирован и сохраняет ли кто-либо право пользования после сделки.' },
+        encumbrance: { title: 'Обременения и ограничения', text: 'Ипотека, аресты, запреты, залоги и иные ограничения должны быть выявлены до расчётов и регистрации.' },
+        replanning: { title: 'Перепланировки и фактическое состояние', text: 'Сопоставьте фактическую планировку с документами и уточните, узаконены ли изменения, если они есть.' },
+        seller: { title: 'Полномочия продавца', text: 'Проверьте личность, полномочия, доверенности, согласия и обстоятельства продажи, особенно если действует представитель.' },
+        settlement: { title: 'Безопасность расчётов', text: 'Схема передачи денег должна быть понятной и синхронизированной с регистрацией перехода права и условиями договора.' },
+        land: { title: 'Участок и ограничения для дома', text: 'Для загородной недвижимости отдельно проверьте участок, вид разрешённого использования, границы, подъезд, коммуникации и ограничения.' }
+      };
+
+      const baseQuestions = [
+        {
+          id: 'market',
+          title: 'Что вы рассматриваете сейчас?',
+          note: 'От этого зависит набор вопросов в диагностике.',
+          options: [
+            { label: 'Новостройку', value: 'new' },
+            { label: 'Вторичную квартиру', value: 'secondary' },
+            { label: 'Дом или загородную недвижимость', value: 'house' },
+            { label: 'Пока не определился(ась)', value: 'unknown', markers: ['strategy'] }
+          ]
+        },
+        {
+          id: 'goal',
+          title: 'Какая главная цель покупки?',
+          note: 'Правильная стратегия зависит от того, для чего вам объект.',
+          options: [
+            { label: 'Жить самому / с семьёй', value: 'live' },
+            { label: 'Увеличить площадь или улучшить условия', value: 'upgrade' },
+            { label: 'Инвестиция / сдача в аренду', value: 'invest', markers: ['strategy'] },
+            { label: 'Переезд', value: 'move' },
+            { label: 'Пока изучаю варианты', value: 'study', markers: ['strategy'] }
+          ]
+        },
+        {
+          id: 'payment',
+          title: 'Как планируете оплачивать покупку?',
+          note: 'Сумму вводить не нужно.',
+          options: [
+            { label: 'Собственные средства', value: 'cash' },
+            { label: 'Ипотека', value: 'mortgage', markers: ['finance','mortgage'] },
+            { label: 'Продажа своей недвижимости + покупка', value: 'chain', markers: ['finance','deadline'] },
+            { label: 'Рассрочка / комбинированная схема', value: 'installment', markers: ['finance','mortgage'] },
+            { label: 'Пока не решил(а)', value: 'unknown', markers: ['finance'] }
+          ]
+        },
+        {
+          id: 'timing',
+          title: 'Насколько срочно нужно выйти на сделку?',
+          note: 'Срочность часто влияет на качество проверки.',
+          options: [
+            { label: 'Можно спокойно выбирать и проверять', value: 'calm' },
+            { label: 'Нужно купить в ближайший месяц', value: 'month', markers: ['deadline'] },
+            { label: 'Объект уже выбран, нужно действовать быстро', value: 'urgent', markers: ['deadline','documents'] }
+          ]
+        },
+        {
+          id: 'specialist',
+          title: 'Кто будет проверять объект и документы?',
+          note: 'Ответ «сам(а)» не означает, что сделка опасна — это лишь зона внимания.',
+          options: [
+            { label: 'Есть независимый специалист на моей стороне', value: 'yes' },
+            { label: 'Планирую проверить самостоятельно', value: 'self', markers: ['specialist'] },
+            { label: 'Полагаюсь на продавца / застройщика / банк', value: 'other', markers: ['specialist','documents'] },
+            { label: 'Пока не думал(а) об этом', value: 'unknown', markers: ['specialist'] }
+          ]
+        }
+      ];
+
+      const branchQuestions = {
+        new: [
+          {
+            id: 'developer', title: 'Проверяли застройщика и документы проекта?', note: 'Не только отзывы и рекламу, а официальную информацию.',
+            options: [
+              { label: 'Да, изучал(а) документы и проект', value: 'yes' },
+              { label: 'Смотрел(а) только сайт / отзывы', value: 'partial', markers: ['developer'] },
+              { label: 'Нет / не знаю, что именно проверять', value: 'no', markers: ['developer','documents'] }
+            ]
+          },
+          {
+            id: 'contract', title: 'Условия договора вам уже понятны?', note: 'Сроки, доплаты, ответственность и передача объекта.',
+            options: [
+              { label: 'Да, договор уже разобран по условиям', value: 'yes' },
+              { label: 'Читал(а), но есть непонятные пункты', value: 'partial', markers: ['contract'] },
+              { label: 'Ещё не видел(а) договор', value: 'no', markers: ['contract'] }
+            ]
+          },
+          {
+            id: 'delivery', title: 'Вы учитывали срок передачи и период до реального переезда?', note: 'После выдачи ключей могут быть приёмка, устранение замечаний и ремонт.',
+            options: [
+              { label: 'Да, есть запас по времени и бюджету', value: 'yes' },
+              { label: 'Ориентируюсь в основном на заявленную дату', value: 'partial', markers: ['deadline'] },
+              { label: 'Нужно переехать строго к определённой дате', value: 'strict', markers: ['deadline'] }
+            ]
+          },
+          {
+            id: 'finish', title: 'Понимаете итоговые расходы после покупки?', note: 'Отделка, мебель, переезд, страховки и другие сопутствующие траты.',
+            options: [
+              { label: 'Да, бюджет рассчитан с запасом', value: 'yes' },
+              { label: 'Примерно представляю', value: 'partial', markers: ['finish','finance'] },
+              { label: 'Пока считаю только цену квартиры', value: 'no', markers: ['finish','finance'] }
+            ]
+          }
+        ],
+        secondary: [
+          {
+            id: 'ownership', title: 'Проверяли историю собственности и основание права?', note: 'Важно понимать не только текущего собственника.',
+            options: [
+              { label: 'Да, документы и история уже изучены', value: 'yes' },
+              { label: 'Есть выписка, но историю подробно не смотрел(а)', value: 'partial', markers: ['ownership'] },
+              { label: 'Нет / не знаю, что смотреть', value: 'no', markers: ['ownership','documents'] }
+            ]
+          },
+          {
+            id: 'residents', title: 'Понятно, кто зарегистрирован и имеет право пользования?', note: 'Эта проверка особенно важна до аванса.',
+            options: [
+              { label: 'Да, вопрос проверен', value: 'yes' },
+              { label: 'Продавец сказал, что всё в порядке', value: 'seller', markers: ['residents'] },
+              { label: 'Не проверял(а)', value: 'no', markers: ['residents'] }
+            ]
+          },
+          {
+            id: 'encumbrance', title: 'Обременения и ограничения проверены?', note: 'Ипотека, запреты и иные ограничения требуют понятной схемы снятия.',
+            options: [
+              { label: 'Да, проверены', value: 'yes' },
+              { label: 'Есть ипотека / обременение и схема ещё не ясна', value: 'has', markers: ['encumbrance','settlement'] },
+              { label: 'Не знаю', value: 'unknown', markers: ['encumbrance'] }
+            ]
+          },
+          {
+            id: 'seller', title: 'Кто подписывает договор со стороны продавца?', note: 'При представителе нужны дополнительные проверки полномочий.',
+            options: [
+              { label: 'Сам собственник', value: 'owner' },
+              { label: 'Представитель по доверенности', value: 'proxy', markers: ['seller'] },
+              { label: 'Несколько собственников / есть семейные нюансы', value: 'multiple', markers: ['seller','documents'] },
+              { label: 'Пока не знаю', value: 'unknown', markers: ['seller'] }
+            ]
+          }
+        ],
+        house: [
+          {
+            id: 'land', title: 'Проверяли участок и его характеристики отдельно от дома?', note: 'Категория земли, ВРИ, границы, доступ и ограничения могут быть критичны.',
+            options: [
+              { label: 'Да, участок проверен по документам', value: 'yes' },
+              { label: 'Смотрел(а) в основном дом и локацию', value: 'partial', markers: ['land'] },
+              { label: 'Нет / не знаю, что проверять', value: 'no', markers: ['land','documents'] }
+            ]
+          },
+          {
+            id: 'utilities', title: 'Понимаете реальные расходы на содержание дома?', note: 'Отопление, электричество, вода, обслуживание, дорога и сезонные расходы.',
+            options: [
+              { label: 'Да, запросил(а) фактические расходы', value: 'yes' },
+              { label: 'Знаю примерно со слов продавца', value: 'partial', markers: ['finance'] },
+              { label: 'Пока не считал(а)', value: 'no', markers: ['finance'] }
+            ]
+          },
+          {
+            id: 'houseDocs', title: 'Дом и постройки соответствуют документам?', note: 'Важно сопоставить фактический объект с зарегистрированными характеристиками.',
+            options: [
+              { label: 'Да, сверяли', value: 'yes' },
+              { label: 'Есть изменения / пристройки, статус неясен', value: 'changes', markers: ['documents','land'] },
+              { label: 'Не проверял(а)', value: 'no', markers: ['documents'] }
+            ]
+          },
+          {
+            id: 'access', title: 'Проверяли подъезд и доступ к участку?', note: 'Не только визуально, но и юридическую возможность пользования дорогой/проездом.',
+            options: [
+              { label: 'Да', value: 'yes' },
+              { label: 'Есть вопросы по дороге или соседним участкам', value: 'issue', markers: ['land'] },
+              { label: 'Нет', value: 'no', markers: ['land'] }
+            ]
+          }
+        ],
+        unknown: [
+          {
+            id: 'priority', title: 'Что для вас сейчас важнее всего?', note: 'Это поможет понять, какую стратегию сравнения использовать.',
+            options: [
+              { label: 'Минимум ремонта и готовность к переезду', value: 'ready', markers: ['strategy'] },
+              { label: 'Современный проект и новая среда', value: 'new', markers: ['strategy'] },
+              { label: 'Больше площади / свой участок', value: 'house', markers: ['strategy'] },
+              { label: 'В первую очередь цена и платёж', value: 'price', markers: ['finance','strategy'] }
+            ]
+          },
+          {
+            id: 'compare', title: 'Вы уже сравнивали одинаковый бюджет в разных форматах?', note: 'Например: новостройка, вторичка и дом в сопоставимой локации.',
+            options: [
+              { label: 'Да, сравнение есть', value: 'yes' },
+              { label: 'Только отдельные варианты', value: 'partial', markers: ['strategy'] },
+              { label: 'Нет', value: 'no', markers: ['strategy','finance'] }
+            ]
+          },
+          {
+            id: 'hiddenCosts', title: 'Учитываете расходы после самой покупки?', note: 'Ремонт, мебель, переезд, содержание, транспорт и время.',
+            options: [
+              { label: 'Да, считаю полную картину', value: 'yes' },
+              { label: 'Пока ориентируюсь на цену объекта', value: 'no', markers: ['finance'] }
+            ]
+          },
+          {
+            id: 'decision', title: 'Что сейчас мешает определиться?', note: 'Выберите самый близкий вариант.',
+            options: [
+              { label: 'Слишком много вариантов и противоречивой информации', value: 'many', markers: ['strategy'] },
+              { label: 'Не понимаю, что реально потяну по бюджету', value: 'budget', markers: ['finance'] },
+              { label: 'Боюсь ошибиться с объектом или документами', value: 'risk', markers: ['documents','specialist'] },
+              { label: 'Пока просто изучаю рынок', value: 'study', markers: ['strategy'] }
+            ]
+          }
+        ]
+      };
+
+      let questions = [];
+      let current = 0;
+      let answers = {};
+      let selectedValue = null;
+
+      function showScreen(screen) {
+        [startScreen, quizScreen, resultScreen].forEach(el => el.classList.remove('active'));
+        screen.classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      function buildQuestions() {
+        const market = answers.market;
+        const extra = branchQuestions[market] || branchQuestions.unknown;
+        questions = [...baseQuestions, ...extra];
+      }
+
+      function renderQuestion() {
+        const q = questions[current];
+        if (!q) return;
+        selectedValue = answers[q.id]?.value ?? null;
+        validation.textContent = '';
+        questionTitle.textContent = q.title;
+        questionNote.textContent = q.note || '';
+        progressLabel.textContent = `Вопрос ${current + 1} из ${questions.length}`;
+        progressBar.style.width = `${((current + 1) / questions.length) * 100}%`;
+        branchLabel.textContent = current < 1 ? 'Покупка недвижимости' : branchName(answers.market);
+        backBtn.disabled = current === 0;
+        backBtn.style.opacity = current === 0 ? '.45' : '1';
+        nextBtn.textContent = current === questions.length - 1 ? 'Показать результат' : 'Далее';
+        choicesEl.replaceChildren();
+
+        q.options.forEach((option, index) => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'choice' + (selectedValue === option.value ? ' selected' : '');
+          btn.setAttribute('role', 'radio');
+          btn.setAttribute('aria-checked', selectedValue === option.value ? 'true' : 'false');
+          btn.dataset.value = option.value;
+          btn.textContent = option.label;
+          btn.addEventListener('click', () => {
+            selectedValue = option.value;
+            Array.from(choicesEl.children).forEach(el => {
+              const isSelected = el.dataset.value === selectedValue;
+              el.classList.toggle('selected', isSelected);
+              el.setAttribute('aria-checked', isSelected ? 'true' : 'false');
+            });
+            validation.textContent = '';
+          });
+          if (index === 0) btn.tabIndex = 0;
+          choicesEl.appendChild(btn);
+        });
+      }
+
+      function branchName(market) {
+        const map = {
+          new: 'Новостройка',
+          secondary: 'Вторичный рынок',
+          house: 'Загородная недвижимость',
+          unknown: 'Выбор стратегии'
+        };
+        return map[market] || 'Покупка недвижимости';
+      }
+
+      function saveCurrentAnswer() {
+        const q = questions[current];
+        if (!selectedValue) return false;
+        const option = q.options.find(o => o.value === selectedValue);
+        answers[q.id] = {
+          value: option.value,
+          label: option.label,
+          markers: Array.isArray(option.markers) ? option.markers : []
+        };
+        return true;
+      }
+
+      function calculateFlags() {
+        const counts = {};
+        Object.values(answers).forEach(a => {
+          (a.markers || []).forEach(marker => {
+            counts[marker] = (counts[marker] || 0) + 1;
+          });
+        });
+        const defaults = {
+          new: ['developer','contract','finance'],
+          secondary: ['ownership','encumbrance','settlement'],
+          house: ['land','documents','finance'],
+          unknown: ['strategy','finance','documents']
+        };
+        (defaults[answers.market?.value || answers.market] || defaults.unknown).forEach(m => {
+          if (!counts[m]) counts[m] = 0.35;
+        });
+        return Object.entries(counts)
+          .sort((a,b) => b[1] - a[1])
+          .slice(0,5)
+          .map(([key]) => key)
+          .filter(key => markerInfo[key]);
+      }
+
+      function renderResults() {
+        const marketValue = answers.market?.value || 'unknown';
+        const flags = calculateFlags();
+        const profile = {
+          new: 'По новостройке у вас есть несколько точек, которые стоит проверить до бронирования или подписания договора.',
+          secondary: 'По вторичной недвижимости главное — не спешить с авансом до проверки истории объекта, продавца и схемы расчётов.',
+          house: 'При покупке дома важно проверять не только сам дом, но и участок, доступ, документы и реальную стоимость содержания.',
+          unknown: 'Сейчас главный риск — выбрать формат недвижимости без сопоставления полной стоимости, целей и ограничений.'
+        };
+        resultIntro.textContent = profile[marketValue] || profile.unknown;
+        flagsEl.replaceChildren();
+        flags.forEach(key => {
+          const info = markerInfo[key];
+          const card = document.createElement('div');
+          card.className = 'flag';
+          const strong = document.createElement('strong');
+          strong.textContent = info.title;
+          const p = document.createElement('p');
+          p.textContent = info.text;
+          card.append(strong, p);
+          flagsEl.appendChild(card);
+        });
+
+        const steps = [
+          'Не вносите аванс только из-за ощущения «надо успеть», пока не понятны ключевые документы и условия сделки.',
+          'Соберите единый чек-лист по объекту: документы, расчёты, сроки, обязательные расходы и вопросы, на которые пока нет ответа.',
+          marketValue === 'unknown'
+            ? 'Сравните 2–3 сценария покупки в одном бюджете по полной стоимости владения, а не только по цене объекта.'
+            : 'Перед подписанием документов разберите спорные пункты с независимым специалистом, который представляет вашу сторону.'
+        ];
+        nextStepsEl.replaceChildren();
+        steps.forEach(text => {
+          const li = document.createElement('li');
+          li.textContent = text;
+          nextStepsEl.appendChild(li);
+        });
+        showScreen(resultScreen);
+      }
+
+      startBtn.addEventListener('click', () => {
+        answers = {};
+        questions = [...baseQuestions];
+        current = 0;
+        selectedValue = null;
+        showScreen(quizScreen);
+        renderQuestion();
+      });
+
+      nextBtn.addEventListener('click', () => {
+        if (!saveCurrentAnswer()) {
+          validation.textContent = 'Выберите один вариант ответа.';
+          return;
+        }
+        if (questions[current].id === 'market') {
+          buildQuestions();
+        }
+        if (current >= questions.length - 1) {
+          renderResults();
+          return;
+        }
+        current += 1;
+        renderQuestion();
+      });
+
+      backBtn.addEventListener('click', () => {
+        if (current === 0) return;
+        current -= 1;
+        renderQuestion();
+      });
+
+      restartBtn.addEventListener('click', () => {
+        answers = {};
+        questions = [];
+        current = 0;
+        selectedValue = null;
+        showScreen(startScreen);
+      });
+    })();
+  </script>
+</body>
+</html>
